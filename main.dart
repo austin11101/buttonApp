@@ -1,13 +1,10 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 
-// Entry point of the application.
-// Flutter starts execution here.
 void main() {
   runApp(const ColorChangerApp());
 }
 
-// Root widget of the application.
-// MaterialApp provides navigation, themes, routes, etc.
 class ColorChangerApp extends StatelessWidget {
   const ColorChangerApp({super.key});
 
@@ -15,15 +12,11 @@ class ColorChangerApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-
-      // First screen shown when the app starts
       home: const LoginScreen(),
     );
   }
 }
 
-// Login screen.
-// StatefulWidget is used because username/password can change.
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -32,37 +25,19 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
 
-  // Controllers allow us to read values entered into TextFields.
-  final TextEditingController usernameController =
-      TextEditingController();
-
-  final TextEditingController passwordController =
-      TextEditingController();
-
-  // Function executed when Login button is pressed.
   void login() {
-
-    // Simple hardcoded authentication.
-    // Later this can be replaced with an API call.
     if (usernameController.text == "admin" &&
         passwordController.text == "1234") {
-
-      // Navigate to the main page and remove login page
-      // from the navigation stack.
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(
-          builder: (_) => const ColorChangerPage(),
-        ),
+        MaterialPageRoute(builder: (_) => const ColorChangerPage()),
       );
     } else {
-
-      // Display error message if login fails.
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Invalid username or password'),
-        ),
+        const SnackBar(content: Text('Invalid username or password')),
       );
     }
   }
@@ -70,20 +45,12 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      // Top navigation bar
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
-
+      appBar: AppBar(title: const Text('Login')),
       body: Padding(
         padding: const EdgeInsets.all(20),
-
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            // Username input field
             TextField(
               controller: usernameController,
               decoration: const InputDecoration(
@@ -91,25 +58,16 @@ class _LoginScreenState extends State<LoginScreen> {
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 15),
-
-            // Password input field
             TextField(
               controller: passwordController,
-
-              // Hides password characters
               obscureText: true,
-
               decoration: const InputDecoration(
                 labelText: "Password",
                 border: OutlineInputBorder(),
               ),
             ),
-
             const SizedBox(height: 20),
-
-            // Login button
             ElevatedButton(
               onPressed: login,
               child: const Text("Login"),
@@ -121,7 +79,6 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 }
 
-// Main application page after successful login.
 class ColorChangerPage extends StatefulWidget {
   const ColorChangerPage({super.key});
 
@@ -130,20 +87,10 @@ class ColorChangerPage extends StatefulWidget {
 }
 
 class _ColorChangerPageState extends State<ColorChangerPage> {
-
-  // Stores current background color.
   Color backgroundColor = Colors.white;
-
-  // Stores color name displayed on screen.
   String selectedColor = "White";
-
-  // Tracks selected BottomNavigationBar item.
-  // 0 = Home
-  // 1 = Business
-  // 2 = School
   int _selectedIndex = 0;
 
-  // Updates screen color and displayed color name.
   void changeColor(Color color, String name) {
     setState(() {
       backgroundColor = color;
@@ -151,86 +98,57 @@ class _ColorChangerPageState extends State<ColorChangerPage> {
     });
   }
 
-  // Determines which screen to display.
   Widget _buildScreen() {
     if (_selectedIndex == 0) {
       return homeScreen();
     } else if (_selectedIndex == 1) {
+      return businessScreen();
+    } else if (_selectedIndex == 2) {
       return const Center(
-        child: Text(
-          'Business Screen',
-          style: TextStyle(fontSize: 24),
-        ),
+        child: Text('School Screen', style: TextStyle(fontSize: 24)),
       );
     } else {
-      return const Center(
-        child: Text(
-          'School Screen',
-          style: TextStyle(fontSize: 24),
-        ),
-      );
+      return gamesScreen();
     }
   }
 
-  // Home screen content.
   Widget homeScreen() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-
-          // Displays selected color name
           Text(
             'Current Color: $selectedColor',
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-            ),
+            style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
           ),
-
           const SizedBox(height: 20),
-
-          // Opens About page
           ElevatedButton(
             child: const Text('About'),
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(
-                  builder: (_) => const AboutScreen(),
-                ),
+                MaterialPageRoute(builder: (_) => const AboutScreen()),
               );
             },
           ),
-
           const SizedBox(height: 40),
-
-          // Color selection buttons
           Wrap(
             spacing: 10,
             children: [
-
               ElevatedButton(
-                onPressed: () =>
-                    changeColor(Colors.red, "Red"),
+                onPressed: () => changeColor(Colors.red, "Red"),
                 child: const Text('Red'),
               ),
-
               ElevatedButton(
-                onPressed: () =>
-                    changeColor(Colors.green, "Green"),
+                onPressed: () => changeColor(Colors.green, "Green"),
                 child: const Text('Green'),
               ),
-
               ElevatedButton(
-                onPressed: () =>
-                    changeColor(Colors.blue, "Blue"),
+                onPressed: () => changeColor(Colors.blue, "Blue"),
                 child: const Text('Blue'),
               ),
-
               ElevatedButton(
-                onPressed: () =>
-                    changeColor(Colors.white, "White"),
+                onPressed: () => changeColor(Colors.white, "White"),
                 child: const Text('Reset'),
               ),
             ],
@@ -240,27 +158,108 @@ class _ColorChangerPageState extends State<ColorChangerPage> {
     );
   }
 
-  // Logs user out and returns to Login screen.
+  Widget businessScreen() {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          children: const [
+            Icon(Icons.business_center, size: 80, color: Colors.blue),
+            SizedBox(height: 15),
+            Text(
+              'Austin Tech Solutions',
+              style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 10),
+            Text(
+              'Professional IT services for individuals and small businesses.',
+              style: TextStyle(fontSize: 16),
+              textAlign: TextAlign.center,
+            ),
+            SizedBox(height: 25),
+            ServiceCard(
+              icon: Icons.web,
+              title: 'Web Development',
+              subtitle: 'Modern websites and web applications',
+            ),
+            ServiceCard(
+              icon: Icons.settings,
+              title: 'Website Maintenance',
+              subtitle: 'Fixes, updates, backups, and improvements',
+            ),
+            ServiceCard(
+              icon: Icons.cloud,
+              title: 'Hosting Solutions',
+              subtitle: 'Help with hosting and publishing websites online',
+            ),
+            ServiceCard(
+              icon: Icons.phone_android,
+              title: 'Flutter Apps',
+              subtitle: 'Simple mobile and web apps using Flutter',
+            ),
+            ServiceCard(
+              icon: Icons.laptop,
+              title: 'Laptop Repairs',
+              subtitle: 'Hardware and software troubleshooting',
+            ),
+            ServiceCard(
+              icon: Icons.upgrade,
+              title: 'System Upgrades',
+              subtitle: 'RAM, storage, Windows, Linux, and performance upgrades',
+            ),
+            ServiceCard(
+              icon: Icons.support_agent,
+              title: 'Technical Support',
+              subtitle: 'General IT support and problem solving',
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget gamesScreen() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Icon(Icons.sports_esports, size: 100, color: Colors.green),
+          const SizedBox(height: 20),
+          const Text(
+            'Games Page',
+            style: TextStyle(fontSize: 30, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 20),
+          ElevatedButton(
+            child: const Text('Play Snake Game'),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (_) => const SnakeGameScreen()),
+              );
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
   void logout() {
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(
-        builder: (_) => const LoginScreen(),
-      ),
+      MaterialPageRoute(builder: (_) => const LoginScreen()),
     );
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      // Screen background changes when buttons are pressed
       backgroundColor: backgroundColor,
-
       appBar: AppBar(
+        backgroundColor: Colors.blue,
+        foregroundColor: Colors.yellow,
         title: const Text('Flutter Color Changer'),
-
-        // Logout button in top-right corner
         actions: [
           IconButton(
             icon: const Icon(Icons.logout),
@@ -268,52 +267,34 @@ class _ColorChangerPageState extends State<ColorChangerPage> {
           ),
         ],
       ),
-
-      // Side navigation drawer
       drawer: const Drawer(
-        child: Center(
-          child: Text('Navigation Menu'),
-        ),
+        child: Center(child: Text('Navigation Menu')),
       ),
-
-      // Main content area
       body: _buildScreen(),
-
-      // Floating button in bottom-right corner
       floatingActionButton: FloatingActionButton(
         onPressed: () {
           debugPrint("Floating button pressed");
         },
         child: const Icon(Icons.add),
       ),
-
-      // Bottom navigation menu
       bottomNavigationBar: BottomNavigationBar(
-
-        // Currently selected tab
         currentIndex: _selectedIndex,
-
-        // Triggered when user taps a menu item
+        selectedItemColor: Colors.yellow,
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.blue,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
           });
         },
-
         items: const [
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
+          BottomNavigationBarItem(icon: Icon(Icons.business), label: 'Business'),
+          BottomNavigationBarItem(icon: Icon(Icons.school), label: 'School'),
           BottomNavigationBarItem(
-            icon: Icon(Icons.home),
-            label: 'Home',
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.business),
-            label: 'Business',
-          ),
-
-          BottomNavigationBarItem(
-            icon: Icon(Icons.school),
-            label: 'School',
+            icon: Icon(Icons.sports_esports),
+            label: 'Games',
           ),
         ],
       ),
@@ -321,23 +302,199 @@ class _ColorChangerPageState extends State<ColorChangerPage> {
   }
 }
 
-// Simple About page.
+class ServiceCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+
+  const ServiceCard({
+    super.key,
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 4,
+      child: ListTile(
+        leading: Icon(icon),
+        title: Text(title),
+        subtitle: Text(subtitle),
+      ),
+    );
+  }
+}
+
 class AboutScreen extends StatelessWidget {
   const AboutScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      appBar: AppBar(
-        title: const Text('About Screen'),
-      ),
-
+      appBar: AppBar(title: const Text('About Screen')),
       body: const Center(
         child: Text(
           'Welcome to the About Screen',
           style: TextStyle(fontSize: 24),
         ),
+      ),
+    );
+  }
+}
+
+class SnakeGameScreen extends StatefulWidget {
+  const SnakeGameScreen({super.key});
+
+  @override
+  State<SnakeGameScreen> createState() => _SnakeGameScreenState();
+}
+
+class _SnakeGameScreenState extends State<SnakeGameScreen> {
+  final int rowSize = 10;
+  final int totalSquares = 100;
+
+  List<int> snakePosition = [44, 45, 46];
+
+  int foodPosition = 55;
+  int score = 0;
+
+  String direction = "right";
+  final Random random = Random();
+
+  void moveSnake() {
+    setState(() {
+      int newHead = snakePosition.last;
+
+      if (direction == "right") {
+        newHead = newHead + 1;
+      } else if (direction == "left") {
+        newHead = newHead - 1;
+      } else if (direction == "up") {
+        newHead = newHead - rowSize;
+      } else if (direction == "down") {
+        newHead = newHead + rowSize;
+      }
+
+      if (newHead < 0 || newHead >= totalSquares) {
+        resetGame();
+        return;
+      }
+
+      snakePosition.add(newHead);
+
+      if (newHead == foodPosition) {
+        score++;
+        generateNewFood();
+      } else {
+        snakePosition.removeAt(0);
+      }
+    });
+  }
+
+  void generateNewFood() {
+    int newFood = random.nextInt(totalSquares);
+
+    while (snakePosition.contains(newFood)) {
+      newFood = random.nextInt(totalSquares);
+    }
+
+    foodPosition = newFood;
+  }
+
+  void changeDirection(String newDirection) {
+    direction = newDirection;
+    moveSnake();
+  }
+
+  void resetGame() {
+    snakePosition = [44, 45, 46];
+    foodPosition = 55;
+    score = 0;
+    direction = "right";
+  }
+
+  Widget buildSquare(int index) {
+    if (snakePosition.contains(index)) {
+      return Container(
+        margin: const EdgeInsets.all(2),
+        color: Colors.green,
+      );
+    }
+
+    if (index == foodPosition) {
+      return Container(
+        margin: const EdgeInsets.all(2),
+        color: Colors.red,
+      );
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(2),
+      color: Colors.grey[300],
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Snake Game'),
+        backgroundColor: Colors.green,
+        foregroundColor: Colors.white,
+      ),
+      body: Column(
+        children: [
+          const SizedBox(height: 15),
+          Text(
+            'Score: $score',
+            style: const TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 15),
+          Expanded(
+            child: GridView.builder(
+              itemCount: totalSquares,
+              gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: rowSize,
+              ),
+              itemBuilder: (context, index) {
+                return buildSquare(index);
+              },
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              setState(() {
+                resetGame();
+              });
+            },
+            child: const Text('Reset Game'),
+          ),
+          IconButton(
+            icon: const Icon(Icons.keyboard_arrow_up, size: 40),
+            onPressed: () => changeDirection("up"),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.keyboard_arrow_left, size: 40),
+                onPressed: () => changeDirection("left"),
+              ),
+              const SizedBox(width: 40),
+              IconButton(
+                icon: const Icon(Icons.keyboard_arrow_right, size: 40),
+                onPressed: () => changeDirection("right"),
+              ),
+            ],
+          ),
+          IconButton(
+            icon: const Icon(Icons.keyboard_arrow_down, size: 40),
+            onPressed: () => changeDirection("down"),
+          ),
+          const SizedBox(height: 20),
+        ],
       ),
     );
   }

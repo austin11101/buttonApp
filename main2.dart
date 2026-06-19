@@ -233,11 +233,6 @@ class _GymHomePageState extends State<GymHomePage> {
             ),
           ),
           actions: [
-            IconButton(
-              icon: const Icon(Icons.monitor_weight),
-              onPressed: openWeightTracker,
-            ),
-            
             TextButton(
               onPressed: () => Navigator.pop(context),
               child: const Text('Cancel'),
@@ -289,24 +284,168 @@ class _GymHomePageState extends State<GymHomePage> {
     return SingleChildScrollView(
       padding: const EdgeInsets.all(20),
       child: Column(
-        children: const [
-          Icon(Icons.fitness_center, size: 80, color: Colors.deepPurple),
-          SizedBox(height: 15),
-          Text(
-            'My Gym Planner',
-            style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold),
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Card(
+            elevation: 4,
+            child: ListTile(
+              leading: CircleAvatar(
+                child: Icon(Icons.person),
+              ),
+              title: Text(
+                'Welcome Austin 👋',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              subtitle: Text('Fitness Beginner'),
+            ),
           ),
-          SizedBox(height: 10),
-          Text(
-            'Plan your workouts, track your days, and stay consistent.',
-            textAlign: TextAlign.center,
-            style: TextStyle(fontSize: 16),
+          const SizedBox(height: 20),
+          const Text(
+            'Quick Stats',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
           ),
-          SizedBox(height: 25),
-          GoalCard(
-            title: 'Today Reminder',
-            description: 'Check your schedule before your workout starts.',
-            icon: Icons.notifications_active,
+          const SizedBox(height: 10),
+          Row(
+            children: const [
+              Expanded(
+                child: DashboardStatCard(
+                  icon: Icons.monitor_weight,
+                  value: '78kg',
+                  label: 'Weight',
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: DashboardStatCard(
+                  icon: Icons.flag,
+                  value: '72kg',
+                  label: 'Goal',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Row(
+            children: const [
+              Expanded(
+                child: DashboardStatCard(
+                  icon: Icons.local_fire_department,
+                  value: '7 days',
+                  label: 'Streak',
+                ),
+              ),
+              SizedBox(width: 10),
+              Expanded(
+                child: DashboardStatCard(
+                  icon: Icons.check_circle,
+                  value: '4 / 5',
+                  label: 'Workouts',
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "Today's Workout",
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          const Card(
+            elevation: 4,
+            child: ListTile(
+              leading: Icon(Icons.fitness_center, color: Colors.deepPurple),
+              title: Text('Chest & Triceps'),
+              subtitle: Text('Bench Press\nPush Ups\nTricep Dips\n18:00 - 19:00'),
+              isThreeLine: true,
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Weekly Goal Progress',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          const LinearProgressIndicator(value: 0.8),
+          const SizedBox(height: 8),
+          const Text('4 of 5 workouts completed'),
+          const SizedBox(height: 20),
+          const Text(
+            'BMI',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          const Card(
+            child: ListTile(
+              leading: Icon(Icons.calculate, color: Colors.green),
+              title: Text('24.1'),
+              subtitle: Text('Normal Weight'),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Upcoming Workouts',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          const Card(
+            child: ListTile(
+              leading: Icon(Icons.calendar_month),
+              title: Text('Friday'),
+              subtitle: Text('Full Body'),
+            ),
+          ),
+          const Card(
+            child: ListTile(
+              leading: Icon(Icons.calendar_month),
+              title: Text('Saturday'),
+              subtitle: Text('Cardio'),
+            ),
+          ),
+          const SizedBox(height: 20),
+          Card(
+            color: Colors.deepPurple,
+            child: const Padding(
+              padding: EdgeInsets.all(20),
+              child: Text(
+                '"Success does not come from what you do occasionally. It comes from what you do consistently."',
+                style: TextStyle(
+                  color: Colors.white,
+                  fontStyle: FontStyle.italic,
+                ),
+              ),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            'Quick Actions',
+            style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              ElevatedButton.icon(
+                onPressed: showAddWorkoutDialog,
+                icon: const Icon(Icons.add),
+                label: const Text('Workout'),
+              ),
+              ElevatedButton.icon(
+                onPressed: openWeightTracker,
+                icon: const Icon(Icons.monitor_weight),
+                label: const Text('Weight'),
+              ),
+              ElevatedButton.icon(
+                onPressed: openBmiCalculator,
+                icon: const Icon(Icons.calculate),
+                label: const Text('BMI'),
+              ),
+              ElevatedButton.icon(
+                onPressed: openCalendarView,
+                icon: const Icon(Icons.calendar_month),
+                label: const Text('Calendar'),
+              ),
+            ],
           ),
         ],
       ),
@@ -549,6 +688,43 @@ class _GymHomePageState extends State<GymHomePage> {
         );
       }
       }
+
+
+class DashboardStatCard extends StatelessWidget {
+  final IconData icon;
+  final String value;
+  final String label;
+
+  const DashboardStatCard({
+    super.key,
+    required this.icon,
+    required this.value,
+    required this.label,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          children: [
+            Icon(icon, color: Colors.deepPurple),
+            const SizedBox(height: 8),
+            Text(
+              value,
+              style: const TextStyle(
+                fontSize: 18,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(label),
+          ],
+        ),
+      ),
+    );
+  }
+}
 
 class WorkoutCard extends StatelessWidget {
   final WorkoutItem item;
